@@ -29,6 +29,29 @@ html,body { min-height:100vh; font-family:var(--font); color:var(--text); backgr
 /* ══════════════════════════════════════
    BACKGROUND
 ══════════════════════════════════════ */
+/* Floating R$ background particles */
+.rbx-bg {
+  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+}
+.rbx-particle {
+  position:absolute;
+  bottom:-60px;
+  font-family:var(--font);
+  font-weight:900;
+  color:var(--gold);
+  opacity:0;
+  animation:rbxFloat linear infinite;
+  will-change:transform,opacity;
+  user-select:none;
+}
+@keyframes rbxFloat {
+  0%   { transform:translateY(0)   rotate(-10deg) scale(1);   opacity:0; }
+  8%   { opacity:.13; }
+  50%  { transform:translateY(-50vh) rotate(12deg)  scale(1.1); opacity:.09; }
+  92%  { opacity:.06; }
+  100% { transform:translateY(-105vh) rotate(-8deg) scale(.9); opacity:0; }
+}
+
 .bg-grid {
   position:fixed; inset:0; z-index:0; pointer-events:none;
   background-image:
