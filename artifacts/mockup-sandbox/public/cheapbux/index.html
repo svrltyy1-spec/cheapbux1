@@ -178,14 +178,15 @@
         <span class="step-num">03</span>
         <span class="step-title">Your Roblox Username</span>
       </div>
-      <input class="inp" type="text" id="robloxUser" placeholder="e.g. CoolPlayer123"/>
+      <div id="userFieldWrap">
+        <input class="inp" type="text" id="robloxUser" placeholder="e.g. CoolPlayer123"/>
+      </div>
       <p class="field-note" id="loginNote"></p>
     </div>
 
     <!-- Order button -->
-    <button class="btn-order" onclick="placeOrder()">
-      <span class="btn-order-shine"></span>
-      <span class="btn-order-txt">🛒 &nbsp;Place Order</span>
+    <button class="btn-order btn-order--locked" id="orderBtn" onclick="placeOrder()">
+      <span class="btn-order-txt">🔒 &nbsp;Login to Place Order</span>
     </button>
 
   </div><!-- /calc-card -->

@@ -91,10 +91,15 @@ function onPayChange(method) {
    ORDER
 ══════════════════════════════ */
 function placeOrder() {
-  const user = document.getElementById('robloxUser').value.trim()
-             || getSession();
+  // Must be logged in
+  if (!getSession()) {
+    showToast('🔒 Please log in or create an account to place an order');
+    openAuth('login');
+    return;
+  }
 
-  if (!user)    return showToast('⚠️ Enter your Roblox username');
+  const user = getSession();
+
   if (!ttd)     return showToast('⚠️ Choose an amount first');
   if (!payMethod) return showToast('⚠️ Select a payment method');
 
@@ -147,13 +152,26 @@ function refreshSession() {
   const u = getSession();
   document.getElementById('guestNav').classList.toggle('hidden', !!u);
   document.getElementById('userNav').classList.toggle('hidden', !u);
+  const orderBtn  = document.getElementById('orderBtn');
+  const userField = document.getElementById('userFieldWrap');
+
   if (u) {
     document.getElementById('hdrUser').textContent = '@' + u;
     document.getElementById('robloxUser').value    = u;
-    document.getElementById('loginNote').textContent = '✔ Logged in as @' + u;
+    document.getElementById('loginNote').textContent = '✔ Ordering as @' + u;
+    if (userField) userField.classList.add('hidden');
+    if (orderBtn) {
+      orderBtn.classList.remove('btn-order--locked');
+      orderBtn.innerHTML = '<span class="btn-order-shine"></span><span class="btn-order-txt">🛒 &nbsp;Place Order</span>';
+    }
   } else {
     document.getElementById('robloxUser').value    = '';
     document.getElementById('loginNote').textContent = '';
+    if (userField) userField.classList.remove('hidden');
+    if (orderBtn) {
+      orderBtn.classList.add('btn-order--locked');
+      orderBtn.innerHTML = '<span class="btn-order-txt">🔒 &nbsp;Login to Place Order</span>';
+    }
   }
 }
 

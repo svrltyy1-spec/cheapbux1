@@ -489,6 +489,21 @@ select.inp option { background:#10102a; color:#fff; }
 }
 .btn-order:active { transform:translateY(1px); box-shadow:0 0 16px rgba(255,215,0,.25); }
 
+.btn-order--locked {
+  background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+  color:var(--sub);
+  box-shadow:none;
+  cursor:pointer;
+  border:1px solid var(--border);
+}
+.btn-order--locked:hover {
+  background:rgba(0,212,255,.08);
+  border-color:var(--border-c);
+  color:var(--cyan);
+  box-shadow:0 0 20px rgba(0,212,255,.1);
+  transform:none;
+}
+
 .btn-order-shine {
   position:absolute; top:0; left:-80%; width:50%; height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
