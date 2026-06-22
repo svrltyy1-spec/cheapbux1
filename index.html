@@ -251,12 +251,10 @@
     </div>
 
     <!-- Gate -->
-    <div id="adminGate" class="modal-bd" style="padding:24px">
+    <div id="adminGate" class="modal-bd admin-gate-bd">
       <label class="flbl">Admin Password</label>
-      <div class="gate-row">
-        <input class="inp" type="password" id="adminPassInp" placeholder="Enter password…"/>
-        <button class="btn-order" style="flex:none;padding:12px 22px" onclick="checkAdminPass()">Enter</button>
-      </div>
+      <input class="inp admin-pass-inp" type="password" id="adminPassInp" placeholder="Enter admin password…" onkeydown="if(event.key==='Enter')checkAdminPass()"/>
+      <button class="btn-admin-enter" onclick="checkAdminPass()">Enter</button>
     </div>
 
     <!-- Dashboard -->
