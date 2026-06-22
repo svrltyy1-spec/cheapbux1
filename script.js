@@ -371,6 +371,7 @@ function orderCard(o, isAdmin) {
 
   return `
     <div class="ocard" id="oc-${o.id}">
+      <div class="ocard-num">Order #${o.id}</div>
       <div class="ocard-top">
         <span class="ocard-user">@${esc(o.username)}</span>
         <span class="ocard-robux">${Number(o.robux).toLocaleString()} R$</span>

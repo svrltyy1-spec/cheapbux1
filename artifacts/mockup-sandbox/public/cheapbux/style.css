@@ -632,6 +632,10 @@ select.inp option { background:#10102a; color:#fff; }
 .btn-admin-enter:active { transform:translateY(1px); }
 
 /* ── Order cards ── */
+.ocard-num {
+  font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--cyan); margin-bottom:6px; opacity:.8;
+}
 .ocard {
   background:var(--glass); border:1px solid var(--border);
   border-radius:14px; padding:14px 16px; margin-bottom:10px;
