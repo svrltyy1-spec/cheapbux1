@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheapBux – Turn TTD into Robux</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-box">
+        <span class="logo-icon">R$</span>
+      </div>
+      <span class="site-name">CHEAPBUX</span>
+    </div>
+
+    <nav class="header-right">
+      <button class="btn-admin" onclick="openAdmin()">⚙ Admin</button>
+      <button class="btn-orders" onclick="openOrders()">My Orders</button>
+      <span class="username-display" id="usernameDisplay">@guest</span>
+    </nav>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       HERO / TAGLINE
+  ═══════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-graphic">
+      <!-- SVG crystal gem matching screenshot -->
+      <svg width="80" height="110" viewBox="0 0 80 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="40,0 70,30 60,100 40,110 20,100 10,30" fill="#b39ddb" stroke="#7e57c2" stroke-width="2"/>
+        <polygon points="40,0 70,30 40,40" fill="#ce93d8" stroke="#7e57c2" stroke-width="1"/>
+        <polygon points="10,30 40,40 20,100" fill="#9575cd" stroke="#7e57c2" stroke-width="1"/>
+        <polygon points="70,30 40,40 60,100" fill="#7c4dff" stroke="#7e57c2" stroke-width="1"/>
+        <polygon points="40,40 20,100 40,110 60,100" fill="#ab47bc" stroke="#7e57c2" stroke-width="1"/>
+        <line x1="40" y1="0" x2="40" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1 class="hero-headline">
+        Turn your <span class="badge-ttd">TTD</span> into <span class="badge-robux">ROBUX</span>
+      </h1>
+      <p class="hero-sub">1 TTD = 10 Robux · Fast &amp; Easy</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN CALCULATOR CARD
+  ═══════════════════════════════════════════ -->
+  <main class="main-wrapper">
+    <div class="calculator-card">
+
+      <!-- Amount display -->
+      <div class="calc-top">
+        <label class="calc-label">You pay (TTD)</label>
+        <div class="amount-badge" id="amountBadge">$0</div>
+      </div>
+
+      <!-- Slider -->
+      <div class="slider-wrapper">
+        <input
+          type="range"
+          id="ttdSlider"
+          min="0"
+          max="100"
+          value="0"
+          step="1"
+          oninput="updateCalculator(this.value)"
+        />
+        <div class="slider-labels">
+          <span>$0</span>
+          <span>$100</span>
+        </div>
+      </div>
+
+      <!-- Quick-pick buttons -->
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setAmount(5)">$5</button>
+        <button class="quick-btn" onclick="setAmount(10)">$10</button>
+        <button class="quick-btn" onclick="setAmount(25)">$25</button>
+        <button class="quick-btn" onclick="setAmount(50)">$50</button>
+        <button class="quick-btn" onclick="setAmount(75)">$75</button>
+        <button class="quick-btn" onclick="setAmount(100)">$100</button>
+      </div>
+
+      <!-- Down arrow -->
+      <div class="arrow-down">&#8595;</div>
+
+      <!-- YOU GET result box -->
+      <div class="result-box">
+        <p class="result-label">YOU GET</p>
+        <div class="result-amount-row">
+          <div class="robux-icon">R$</div>
+          <span class="result-amount" id="robuxAmount">0</span>
+          <span class="result-unit">R$</span>
+        </div>
+        <p class="result-msg" id="resultMsg">Move the slider to see how much Robux you'll get!</p>
+      </div>
+
+      <!-- ── ORDER FORM ── -->
+      <div class="order-form">
+        <div class="form-group">
+          <label class="form-label" for="robloxUsername">Your Roblox Username</label>
+          <input
+            class="form-input"
+            type="text"
+            id="robloxUsername"
+            placeholder="e.g. CoolPlayer123"
+            oninput="updateUsernameDisplay(this.value)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="emailInput">Email Address</label>
+          <input
+            class="form-input"
+            type="email"
+            id="emailInput"
+            placeholder="your@email.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="paymentMethod">Payment Method</label>
+          <select class="form-input form-select" id="paymentMethod">
+            <option value="">-- Select Payment Method --</option>
+            <option value="linx">Linx</option>
+            <option value="cash">Cash</option>
+            <option value="bank-transfer">Bank Transfer</option>
+            <option value="paypal">PayPal</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="orderNotes">Notes (optional)</label>
+          <textarea
+            class="form-input form-textarea"
+            id="orderNotes"
+            placeholder="Any special instructions..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-clear" onclick="clearForm()">CLEAR</button>
+          <button class="btn-order" onclick="submitOrder()">🛒 Order Now</button>
+        </div>
+      </div>
+
+    </div><!-- /calculator-card -->
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       TOAST NOTIFICATION
+  ═══════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════════
+       ORDERS MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="ordersModal" onclick="closeModal('ordersModal')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>My Orders</h2>
+        <button class="modal-close" onclick="closeModal('ordersModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="ordersBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ADMIN MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="adminModal" onclick="closeModal('adminModal')">
+    <div class="modal-card modal-card--wide" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>⚙ Admin Panel</h2>
+        <button class="modal-close" onclick="closeModal('adminModal')">&times;</button>
+      </div>
+
+      <!-- Admin password gate -->
+      <div id="adminGate">
+        <p class="admin-gate-label">Enter admin password:</p>
+        <div class="admin-gate-row">
+          <input class="form-input" type="password" id="adminPassword" placeholder="Password" />
+          <button class="btn-order" onclick="checkAdminPassword()">Enter</button>
+        </div>
+        <p class="admin-hint">(default: admin123)</p>
+      </div>
+
+      <!-- Admin dashboard (hidden until password entered) -->
+      <div id="adminDashboard" class="hidden">
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="statOrders">0</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statRobux">0</div>
+            <div class="stat-label">Robux Sold</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statTTD">$0</div>
+            <div class="stat-label">TTD Value</div>
+          </div>
+        </div>
+
+        <h3 class="admin-section-title">Recent Orders</h3>
+        <div class="modal-body" id="adminOrdersBody">
+          <!-- Populated by JS -->
+        </div>
+
+        <div style="margin-top: 1rem; text-align: right;">
+          <button class="btn-clear" onclick="clearAllOrders()">Clear All Orders</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
