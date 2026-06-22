@@ -133,6 +133,22 @@ html,body { min-height:100vh; font-family:var(--font); color:var(--text); backgr
 
 .hero-left { flex:1; min-width:280px; }
 
+/* Review bar */
+.review-bar {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:18px;
+  padding:10px 16px;
+  background:rgba(255,215,0,.07);
+  border:1px solid rgba(255,215,0,.2);
+  border-radius:50px;
+  width:fit-content;
+}
+.review-stars { display:flex; gap:2px; }
+.rstar { font-size:18px; color:rgba(255,255,255,.15); }
+.rstar.filled { color:var(--gold); text-shadow:0 0 8px rgba(255,215,0,.7); }
+.review-label { font-size:12px; color:var(--sub); font-weight:600; }
+.review-label strong { color:var(--gold); }
+
 .hero-pill {
   display:inline-flex; align-items:center; gap:6px;
   background:rgba(0,212,255,.08); border:1px solid var(--border-c);

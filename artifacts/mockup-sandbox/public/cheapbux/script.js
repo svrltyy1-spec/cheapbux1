@@ -340,9 +340,11 @@ function nukeOrders() {
 ══════════════════════════════ */
 function updateHeroStats() {
   const list = loadOrders();
-  document.getElementById('totalOrdersStat').textContent = list.length;
+  const BASE_ORDERS = 50;
+  const BASE_ROBUX  = 5000;
+  document.getElementById('totalOrdersStat').textContent = (BASE_ORDERS + list.length) + '+';
   document.getElementById('totalRobuxStat').textContent  =
-    list.reduce((s,o)=>s+o.robux,0).toLocaleString() + '+';
+    (BASE_ROBUX + list.reduce((s,o)=>s+o.robux,0)).toLocaleString() + '+';
 }
 
 /* ══════════════════════════════
