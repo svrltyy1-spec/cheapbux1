@@ -1,74 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CheapBux – Robux Store</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CheapBux — Robux Store</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="logo">
-      <div class="logo-gem">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <polygon points="12,2 22,9 18,21 6,21 2,9" fill="#FFD700"/>
-          <polygon points="12,2 22,9 12,13" fill="rgba(255,255,255,0.3)"/>
-        </svg>
-      </div>
-      <span class="logo-text">CHEAP<span class="logo-gold">BUX</span></span>
+<!-- ▓▓ BACKGROUND EFFECTS ▓▓ -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+<div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+<div class="bg-orb bg-orb--3" aria-hidden="true"></div>
+
+<!-- ▓▓ HEADER ▓▓ -->
+<header class="hdr">
+  <a class="brand" href="#">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <polygon points="12,2 22,9 18,22 6,22 2,9" fill="#FFD700"/>
+        <polygon points="12,2 22,9 12,14" fill="rgba(255,255,255,.25)"/>
+        <polygon points="2,9 12,14 6,22"  fill="rgba(255,255,255,.10)"/>
+      </svg>
     </div>
-    <nav class="nav">
-      <button class="nbtn ghost" onclick="openOrders()">My Orders</button>
-      <button class="nbtn gold" onclick="openAdmin()">⚙ Admin</button>
-      <span class="nav-user" id="navUser">@guest</span>
-    </nav>
-  </header>
+    <span class="brand-name">CHEAP<em>BUX</em></span>
+  </a>
 
-  <!-- HERO -->
-  <section class="hero">
-    <!-- Floating 3D orbs (CSS only) -->
-    <div class="orb orb-1" aria-hidden="true"></div>
-    <div class="orb orb-2" aria-hidden="true"></div>
-    <div class="orb orb-3" aria-hidden="true"></div>
-
-    <div class="hero-content">
-      <span class="hero-badge">⚡ Instant Delivery</span>
-      <h1 class="hero-title">
-        Turn <span class="hl">TTD</span> into <span class="hl hl--robux">Robux</span>
-      </h1>
-      <p class="hero-sub">1 TTD = 10 Robux &nbsp;·&nbsp; Fast, Safe &amp; Reliable</p>
+  <nav class="hdr-nav">
+    <!-- shown when logged out -->
+    <div id="guestNav">
+      <button class="hbtn hbtn--outline" onclick="openAuth('login')">Log In</button>
+      <button class="hbtn hbtn--gold"    onclick="openAuth('signup')">Sign Up</button>
     </div>
+    <!-- shown when logged in -->
+    <div id="userNav" class="hidden">
+      <button class="hbtn hbtn--outline" onclick="openMyOrders()">📦 My Orders</button>
+      <span class="hdr-user" id="hdrUser"></span>
+      <button class="hbtn hbtn--ghost" onclick="logout()">Log Out</button>
+    </div>
+    <button class="hbtn hbtn--admin" onclick="openAdmin()">⚙</button>
+  </nav>
+</header>
 
-    <!-- 3D Floating gem -->
-    <div class="gem-scene" aria-hidden="true">
-      <div class="gem-3d">
-        <div class="gem-face f-top"></div>
-        <div class="gem-face f-front"></div>
-        <div class="gem-face f-left"></div>
-        <div class="gem-face f-right"></div>
-        <div class="gem-face f-back"></div>
-        <div class="gem-glow-ring"></div>
+<!-- ▓▓ HERO ▓▓ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <span class="hero-pill">⚡ Instant · Trusted · TTD Accepted</span>
+      <h1 class="hero-h1">The <span class="neon-text">Fastest</span><br>Robux Store<br>in Trinidad</h1>
+      <p class="hero-p">1 TTD = 10 Robux &mdash; Pay in cash, favor, or loan.<br>Your Robux, your way.</p>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-num" id="totalOrdersStat">0</span><span class="hstat-lbl">Orders</span></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><span class="hstat-num" id="totalRobuxStat">0</span><span class="hstat-lbl">R$ Sold</span></div>
       </div>
     </div>
-  </section>
+    <div class="hero-right" aria-hidden="true">
+      <div class="gem-wrap">
+        <div class="gem-3d">
+          <div class="gf gf-top"></div>
+          <div class="gf gf-fr"></div>
+          <div class="gf gf-bl"></div>
+          <div class="gf gf-br"></div>
+          <div class="gem-shine"></div>
+        </div>
+        <div class="gem-shadow"></div>
+        <div class="gem-ring gem-ring--1"></div>
+        <div class="gem-ring gem-ring--2"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- CALCULATOR -->
-  <main class="main">
-    <div class="card">
+<!-- ▓▓ CALCULATOR ▓▓ -->
+<main class="main">
+  <div class="calc-card">
+    <!-- animated border -->
+    <div class="card-border-anim" aria-hidden="true"></div>
 
-      <!-- TTD row -->
-      <div class="row-between">
-        <span class="card-label">You Pay <span class="dim">(TTD)</span></span>
-        <div class="pill" id="amountPill">$0</div>
+    <!-- Step 1 — Amount -->
+    <div class="step">
+      <div class="step-hd">
+        <span class="step-num">01</span>
+        <span class="step-title">Choose Amount <span class="dim">(TTD)</span></span>
+        <div class="amount-pill" id="amtPill">$0</div>
       </div>
 
-      <!-- Slider -->
       <div class="slider-wrap">
         <input type="range" id="slider" min="0" max="100" value="0" step="1"
-               oninput="onSlide(this.value)" />
-        <div class="slider-ends"><span>$0</span><span>$100</span></div>
+               oninput="onSlide(this.value)"/>
+        <div class="slider-labels"><span>$0</span><span>$100</span></div>
       </div>
 
       <!-- Quick picks -->
@@ -80,94 +102,206 @@
         <button class="pick" onclick="snap(75)">$75</button>
         <button class="pick" onclick="snap(100)">$100</button>
       </div>
+    </div>
 
-      <!-- Result panel -->
-      <div class="result">
-        <div class="result-left">
-          <p class="result-tag">YOU RECEIVE</p>
-          <div class="result-row">
-            <div class="rcoin">R$</div>
-            <span class="rnum" id="robuxNum">0</span>
-            <span class="runit">R$</span>
+    <!-- Divider -->
+    <div class="card-div"></div>
+
+    <!-- Step 2 — Payment method -->
+    <div class="step">
+      <div class="step-hd" style="margin-bottom:14px">
+        <span class="step-num">02</span>
+        <span class="step-title">Payment Method</span>
+      </div>
+      <div class="pay-options">
+        <label class="pay-opt" id="popt-cash">
+          <input type="radio" name="pay" value="cash" onchange="onPayChange('cash')" checked/>
+          <div class="pay-card">
+            <span class="pay-icon">💵</span>
+            <span class="pay-name">Cash</span>
+            <span class="pay-sub">$1–$100</span>
           </div>
-          <p class="rhint" id="rhint">Move the slider to calculate</p>
-        </div>
-        <div class="result-badge-3d" aria-hidden="true">
-          <div class="rb3d-inner">R$</div>
-          <div class="rb3d-shadow"></div>
-        </div>
+        </label>
+        <label class="pay-opt" id="popt-favor">
+          <input type="radio" name="pay" value="favor" onchange="onPayChange('favor')"/>
+          <div class="pay-card">
+            <span class="pay-icon">🤝</span>
+            <span class="pay-name">Favor</span>
+            <span class="pay-sub">$1 only</span>
+          </div>
+        </label>
+        <label class="pay-opt" id="popt-loan">
+          <input type="radio" name="pay" value="loan" onchange="onPayChange('loan')"/>
+          <div class="pay-card">
+            <span class="pay-icon">🏦</span>
+            <span class="pay-name">Loan</span>
+            <span class="pay-sub">$1 only</span>
+          </div>
+        </label>
       </div>
-
-      <!-- Form -->
-      <div class="form">
-        <div class="form-grid">
-          <input class="inp" type="text"  id="username" placeholder="Roblox Username"
-                 oninput="syncUser(this.value)" />
-          <input class="inp" type="email" id="email"    placeholder="Email Address" />
-        </div>
-        <select class="inp isel" id="payment">
-          <option value="">Payment Method</option>
-          <option value="linx">Linx</option>
-          <option value="cash">Cash</option>
-          <option value="bank">Bank Transfer</option>
-          <option value="paypal">PayPal</option>
-          <option value="other">Other</option>
-        </select>
-        <div class="form-btns">
-          <button class="bclear" onclick="resetForm()">Clear</button>
-          <button class="border" onclick="placeOrder()">
-            <span class="btn-glow"></span>
-            🛒 Order Now
-          </button>
-        </div>
-      </div>
-
+      <p class="pay-note hidden" id="payNote">⚠️ Favor &amp; Loan orders are limited to <strong>$1 TTD (10 Robux)</strong>.</p>
     </div>
-  </main>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
+    <!-- Divider -->
+    <div class="card-div"></div>
 
-  <!-- ORDERS MODAL -->
-  <div class="overlay" id="ordersModal" onclick="closeModal('ordersModal')">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="mhead">
-        <h2>My Orders</h2>
-        <button class="mclose" onclick="closeModal('ordersModal')">&times;</button>
+    <!-- You Receive -->
+    <div class="result-panel">
+      <div class="result-left">
+        <p class="result-tag">YOU RECEIVE</p>
+        <div class="result-num-row">
+          <div class="rcoin">
+            <span>R$</span>
+            <div class="rcoin-shine"></div>
+          </div>
+          <span class="rnum" id="rnum">0</span>
+          <span class="runit">Robux</span>
+        </div>
+        <p class="rhint" id="rhint">Select an amount above</p>
       </div>
-      <div class="mbody" id="ordersBody"></div>
+      <div class="result-badge" aria-hidden="true">
+        <div class="rbadge-top">
+          <div class="rbadge-face">R$</div>
+          <div class="rbadge-side"></div>
+          <div class="rbadge-bottom"></div>
+        </div>
+        <div class="rbadge-glow"></div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="card-div"></div>
+
+    <!-- Step 3 — Account / Username -->
+    <div class="step">
+      <div class="step-hd" style="margin-bottom:14px">
+        <span class="step-num">03</span>
+        <span class="step-title">Your Roblox Username</span>
+      </div>
+      <input class="inp" type="text" id="robloxUser" placeholder="e.g. CoolPlayer123"/>
+      <p class="field-note" id="loginNote"></p>
+    </div>
+
+    <!-- Order button -->
+    <button class="btn-order" onclick="placeOrder()">
+      <span class="btn-order-shine"></span>
+      <span class="btn-order-txt">🛒 &nbsp;Place Order</span>
+    </button>
+
+  </div><!-- /calc-card -->
+</main>
+
+<!-- ▓▓ TOAST ▓▓ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════
+     AUTH MODAL
+═══════════════════════════════════════ -->
+<div class="overlay" id="authModal" onclick="closeOverlay('authModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-tabs">
+        <button class="mtab active" id="tab-login"  onclick="switchTab('login')">Log In</button>
+        <button class="mtab"        id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+      <button class="mclose" onclick="closeOverlay('authModal')">&times;</button>
+    </div>
+    <div class="modal-bd" style="padding:24px 24px 28px">
+      <div id="authErr" class="auth-err hidden"></div>
+
+      <!-- Login form -->
+      <div id="formLogin">
+        <label class="flbl">Roblox Username</label>
+        <input class="inp" type="text" id="liUser" placeholder="CoolPlayer123" autocomplete="username"/>
+        <label class="flbl" style="margin-top:14px">Password</label>
+        <input class="inp" type="password" id="liPass" placeholder="••••••••" autocomplete="current-password"/>
+        <button class="btn-order" style="margin-top:20px;width:100%" onclick="doLogin()">Log In</button>
+      </div>
+
+      <!-- Signup form -->
+      <div id="formSignup" class="hidden">
+        <label class="flbl">Roblox Username</label>
+        <input class="inp" type="text" id="suUser" placeholder="CoolPlayer123" autocomplete="username"/>
+        <label class="flbl" style="margin-top:14px">Password</label>
+        <input class="inp" type="password" id="suPass" placeholder="Min. 4 characters" autocomplete="new-password"/>
+        <button class="btn-order" style="margin-top:20px;width:100%" onclick="doSignup()">Create Account</button>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ADMIN MODAL -->
-  <div class="overlay" id="adminModal" onclick="closeModal('adminModal')">
-    <div class="modal mwide" onclick="event.stopPropagation()">
-      <div class="mhead">
-        <h2>⚙ Admin Panel</h2>
-        <button class="mclose" onclick="closeModal('adminModal')">&times;</button>
+<!-- ═══════════════════════════════════════
+     MY ORDERS MODAL
+═══════════════════════════════════════ -->
+<div class="overlay" id="myOrdersModal" onclick="closeOverlay('myOrdersModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <h2 class="modal-title">📦 My Orders</h2>
+      <button class="mclose" onclick="closeOverlay('myOrdersModal')">&times;</button>
+    </div>
+    <div class="modal-bd" id="myOrdersBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ADMIN MODAL
+═══════════════════════════════════════ -->
+<div class="overlay" id="adminModal" onclick="closeOverlay('adminModal')">
+  <div class="modal modal--wide" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <h2 class="modal-title">⚙ Admin Panel</h2>
+      <button class="mclose" onclick="closeOverlay('adminModal')">&times;</button>
+    </div>
+
+    <!-- Gate -->
+    <div id="adminGate" class="modal-bd" style="padding:24px">
+      <label class="flbl">Admin Password</label>
+      <div class="gate-row">
+        <input class="inp" type="password" id="adminPassInp" placeholder="Enter password…"/>
+        <button class="btn-order" style="flex:none;padding:12px 22px" onclick="checkAdminPass()">Enter</button>
       </div>
-      <div id="adminGate">
-        <p class="gate-lbl">Enter Password</p>
-        <div class="gate-row">
-          <input class="inp" type="password" id="adminPass" placeholder="admin123" />
-          <button class="border" onclick="checkPass()">Enter</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="adminDash" class="hidden">
+      <!-- Stats -->
+      <div class="admin-stats">
+        <div class="astat astat--gold">
+          <div class="astat-v" id="asTotalOrders">0</div>
+          <div class="astat-k">Total Orders</div>
         </div>
-        <p class="gate-hint">Default: admin123</p>
+        <div class="astat astat--cyan">
+          <div class="astat-v" id="asTotalRobux">0</div>
+          <div class="astat-k">R$ Sold</div>
+        </div>
+        <div class="astat astat--purple">
+          <div class="astat-v" id="asTotalTTD">$0</div>
+          <div class="astat-k">TTD Value</div>
+        </div>
+        <div class="astat astat--green">
+          <div class="astat-v" id="asCompleted">0</div>
+          <div class="astat-k">Completed</div>
+        </div>
       </div>
-      <div id="adminBoard" class="hidden">
-        <div class="stats">
-          <div class="stat"><div class="sv" id="sOrders">0</div><div class="sk">Orders</div></div>
-          <div class="stat"><div class="sv" id="sRobux">0</div><div class="sk">R$ Sold</div></div>
-          <div class="stat"><div class="sv" id="sTTD">$0</div><div class="sk">TTD Value</div></div>
-        </div>
-        <div class="mbody" id="adminBody"></div>
-        <div class="mnuke">
-          <button class="bclear" onclick="nukeOrders()">Clear All Orders</button>
-        </div>
+
+      <!-- Filter tabs -->
+      <div class="admin-filters">
+        <button class="afbtn active" onclick="filterOrders('all',this)">All</button>
+        <button class="afbtn" onclick="filterOrders('Pending',this)">Pending</button>
+        <button class="afbtn" onclick="filterOrders('Processing',this)">Processing</button>
+        <button class="afbtn" onclick="filterOrders('Completed',this)">Completed</button>
+        <button class="afbtn" onclick="filterOrders('Cancelled',this)">Cancelled</button>
+      </div>
+
+      <div class="modal-bd" id="adminOrdersBody" style="max-height:340px"></div>
+
+      <div class="admin-foot">
+        <button class="btn-danger" onclick="nukeOrders()">🗑 Clear All Orders</button>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
