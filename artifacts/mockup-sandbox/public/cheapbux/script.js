@@ -1,450 +1,187 @@
-/* ═══════════════════════════════════════════
-   CHEAPBUX – script.js
-   All logic: calculator, orders, admin panel
-   Uses localStorage only – works on GitHub Pages
-═══════════════════════════════════════════ */
+/* CheapBux — script.js | localStorage only, GitHub Pages ready */
 
-/* ──────────────────────────────────────────
-   CONSTANTS
-────────────────────────────────────────── */
-const ROBUX_RATE   = 10;        // 1 TTD = 10 Robux
-const STORAGE_KEY  = 'cheapbux_orders';
-const ADMIN_PASS   = 'admin123';
+const RATE = 10;           // 1 TTD = 10 Robux
+const KEY  = 'cbx_orders';
+const PASS = 'admin123';
 
-/* ──────────────────────────────────────────
-   CALCULATOR STATE
-────────────────────────────────────────── */
-let currentTTD = 0;  // currently selected TTD amount
+let ttd = 0;
+let adminOk = false;
 
-/**
- * Called whenever the slider moves.
- * Updates the displayed TTD amount, Robux amount, and slider fill colour.
- * @param {number|string} value – the new slider value
- */
-function updateCalculator(value) {
-  currentTTD = Number(value);
-
-  // Update slider visual fill
-  const slider = document.getElementById('ttdSlider');
-  const percent = (currentTTD / 100) * 100;
-  slider.style.background = `linear-gradient(to right, #f5c800 ${percent}%, #ddd ${percent}%)`;
-
-  // Update TTD badge
-  document.getElementById('amountBadge').textContent = '$' + currentTTD;
-
-  // Calculate Robux
-  const robux = currentTTD * ROBUX_RATE;
-  document.getElementById('robuxAmount').textContent = robux.toLocaleString();
-
-  // Update helper message
-  const msg = document.getElementById('resultMsg');
-  if (currentTTD === 0) {
-    msg.textContent = 'Move the slider to see how much Robux you\'ll get!';
-  } else {
-    msg.textContent =
-      `You'll receive ${robux.toLocaleString()} Robux for $${currentTTD} TTD — fast & easy!`;
-  }
-
-  // Highlight matching quick button
-  highlightQuickBtn(currentTTD);
+/* ── Calculator ── */
+function onSlide(v) {
+  ttd = Number(v);
+  const pct = ttd;
+  const sl  = document.getElementById('slider');
+  sl.style.background = `linear-gradient(to right,#FFD700 ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+  document.getElementById('amountPill').textContent = '$' + ttd;
+  const robux = ttd * RATE;
+  document.getElementById('robuxNum').textContent = robux.toLocaleString();
+  document.getElementById('rhint').textContent = ttd
+    ? `You get ${robux.toLocaleString()} Robux for $${ttd} TTD`
+    : 'Move the slider to calculate';
+  markPick(ttd);
 }
 
-/**
- * Set the slider (and calculator) to a specific TTD value.
- * Called by the quick-pick buttons.
- * @param {number} amount
- */
-function setAmount(amount) {
-  const slider = document.getElementById('ttdSlider');
-  slider.value = amount;
-  updateCalculator(amount);
+function snap(v) {
+  document.getElementById('slider').value = v;
+  onSlide(v);
 }
 
-/**
- * Visually highlight the matching quick-pick button.
- * @param {number} amount
- */
-function highlightQuickBtn(amount) {
-  document.querySelectorAll('.quick-btn').forEach(btn => {
-    const btnVal = parseInt(btn.textContent.replace('$', ''));
-    btn.classList.toggle('active', btnVal === amount);
+function markPick(v) {
+  document.querySelectorAll('.pick').forEach(b => {
+    b.classList.toggle('on', parseInt(b.textContent) === v);
   });
 }
 
-/* ──────────────────────────────────────────
-   USERNAME DISPLAY
-────────────────────────────────────────── */
-
-/**
- * Update the header username display as the user types their Roblox username.
- * @param {string} value
- */
-function updateUsernameDisplay(value) {
-  const display = document.getElementById('usernameDisplay');
-  display.textContent = value ? '@' + value : '@guest';
+function syncUser(v) {
+  document.getElementById('navUser').textContent = v ? '@' + v : '@guest';
 }
 
-/* ──────────────────────────────────────────
-   ORDER FORM
-────────────────────────────────────────── */
-
-/**
- * Clears all form fields and resets the calculator.
- */
-function clearForm() {
-  document.getElementById('robloxUsername').value = '';
-  document.getElementById('emailInput').value     = '';
-  document.getElementById('paymentMethod').value  = '';
-  document.getElementById('orderNotes').value     = '';
-  setAmount(0);
-  updateUsernameDisplay('');
+/* ── Order form ── */
+function resetForm() {
+  ['username','email','payment'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  snap(0);
+  syncUser('');
 }
 
-/**
- * Validates the form and saves an order to localStorage.
- */
-function submitOrder() {
-  const username = document.getElementById('robloxUsername').value.trim();
-  const email    = document.getElementById('emailInput').value.trim();
-  const payment  = document.getElementById('paymentMethod').value;
+function placeOrder() {
+  const u = document.getElementById('username').value.trim();
+  const e = document.getElementById('email').value.trim();
+  const p = document.getElementById('payment').value;
+  if (!u)              return toast('⚠️ Enter your Roblox username');
+  if (!e || !e.includes('@')) return toast('⚠️ Enter a valid email');
+  if (!p)              return toast('⚠️ Select a payment method');
+  if (!ttd)            return toast('⚠️ Choose an amount first');
 
-  // Basic validation
-  if (!username) {
-    showToast('⚠️ Please enter your Roblox username.');
-    document.getElementById('robloxUsername').focus();
-    return;
-  }
-
-  if (!email || !email.includes('@')) {
-    showToast('⚠️ Please enter a valid email address.');
-    document.getElementById('emailInput').focus();
-    return;
-  }
-
-  if (!payment) {
-    showToast('⚠️ Please select a payment method.');
-    document.getElementById('paymentMethod').focus();
-    return;
-  }
-
-  if (currentTTD === 0) {
-    showToast('⚠️ Please select an amount using the slider.');
-    return;
-  }
-
-  // Build the order object
   const order = {
-    id:        Date.now(),                          // unique ID
-    username:  username,
-    email:     email,
-    payment:   payment,
-    notes:     document.getElementById('orderNotes').value.trim(),
-    ttd:       currentTTD,
-    robux:     currentTTD * ROBUX_RATE,
-    status:    'Pending',
-    createdAt: new Date().toLocaleString()
+    id: Date.now(), username: u, email: e, payment: p,
+    ttd, robux: ttd * RATE, status: 'Pending',
+    date: new Date().toLocaleString()
   };
-
-  // Save to localStorage
-  saveOrder(order);
-
-  // Feedback
-  showToast(`✅ Order placed! ${order.robux.toLocaleString()} Robux ordered for @${username}`);
-
-  // Reset form
-  clearForm();
+  const list = load(); list.unshift(order); save(list);
+  toast(`✅ Order placed! ${order.robux.toLocaleString()} R$ coming to @${u}`);
+  resetForm();
 }
 
-/* ──────────────────────────────────────────
-   LOCALSTORAGE – ORDER PERSISTENCE
-────────────────────────────────────────── */
+/* ── Storage ── */
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+}
+function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
-/**
- * Load all orders from localStorage.
- * @returns {Array} array of order objects
- */
-function loadOrders() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch (e) {
-    return [];
-  }
+function del(id) {
+  save(load().filter(o => o.id !== id));
+  renderOrders(); renderAdmin(); updateStats();
+  toast('🗑️ Order deleted');
 }
 
-/**
- * Persist the full orders array to localStorage.
- * @param {Array} orders
- */
-function persistOrders(orders) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+function nukeOrders() {
+  if (!confirm('Delete ALL orders? This cannot be undone.')) return;
+  save([]);
+  renderOrders(); renderAdmin(); updateStats();
+  toast('🗑️ All orders cleared');
 }
 
-/**
- * Append a single order to the stored list.
- * @param {Object} order
- */
-function saveOrder(order) {
-  const orders = loadOrders();
-  orders.unshift(order);    // newest first
-  persistOrders(orders);
-}
+/* ── Orders modal ── */
+function openOrders() { renderOrders(); open('ordersModal'); }
 
-/**
- * Delete an order by its unique ID.
- * @param {number} id
- */
-function deleteOrder(id) {
-  const orders = loadOrders().filter(o => o.id !== id);
-  persistOrders(orders);
-}
-
-/* ──────────────────────────────────────────
-   ORDERS MODAL
-────────────────────────────────────────── */
-
-/**
- * Open the My Orders modal and render saved orders.
- */
-function openOrders() {
-  renderOrders();
-  openModal('ordersModal');
-}
-
-/**
- * Render all orders into the Orders modal body.
- */
 function renderOrders() {
-  const body   = document.getElementById('ordersBody');
-  const orders = loadOrders();
-
-  if (orders.length === 0) {
-    body.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📦</div>
-        <p>No orders yet. Place your first order!</p>
-      </div>`;
-    return;
-  }
-
-  body.innerHTML = orders.map(order => buildOrderCard(order, true)).join('');
+  const list = load();
+  const el   = document.getElementById('ordersBody');
+  el.innerHTML = list.length ? list.map(card).join('') : emptyState('📦','No orders yet');
 }
 
-/**
- * Build the HTML string for a single order card.
- * @param {Object} order
- * @param {boolean} showDelete – whether to show the delete button
- * @returns {string} HTML
- */
-function buildOrderCard(order, showDelete) {
-  const deleteBtn = showDelete
-    ? `<button class="order-card-delete" onclick="removeOrder(${order.id})">✕ Delete</button>`
-    : '';
+/* ── Admin modal ── */
+function openAdmin() {
+  if (!adminOk) {
+    document.getElementById('adminGate').classList.remove('hidden');
+    document.getElementById('adminBoard').classList.add('hidden');
+    document.getElementById('adminPass').value = '';
+  }
+  open('adminModal');
+}
 
-  const paymentLabel = {
-    'linx': 'Linx',
-    'cash': 'Cash',
-    'bank-transfer': 'Bank Transfer',
-    'paypal': 'PayPal',
-    'other': 'Other'
-  }[order.payment] || order.payment;
+function checkPass() {
+  if (document.getElementById('adminPass').value !== PASS)
+    return toast('❌ Wrong password');
+  adminOk = true;
+  document.getElementById('adminGate').classList.add('hidden');
+  document.getElementById('adminBoard').classList.remove('hidden');
+  updateStats(); renderAdmin();
+}
 
+function updateStats() {
+  const list = load();
+  document.getElementById('sOrders').textContent = list.length;
+  document.getElementById('sRobux').textContent  = list.reduce((s,o) => s+o.robux,0).toLocaleString();
+  document.getElementById('sTTD').textContent    = '$' + list.reduce((s,o) => s+o.ttd,0);
+}
+
+function renderAdmin() {
+  const list = load();
+  const el   = document.getElementById('adminBody');
+  if (!el) return;
+  el.innerHTML = list.length ? list.map(card).join('') : emptyState('📊','No orders in the system');
+}
+
+/* ── Card HTML ── */
+function card(o) {
+  const labels = {linx:'Linx',cash:'Cash',bank:'Bank Transfer',paypal:'PayPal',other:'Other'};
   return `
-    <div class="order-card" id="order-${order.id}">
-      ${deleteBtn}
-      <div class="order-card-header">
-        <span class="order-card-username">@${escapeHtml(order.username)}</span>
-        <span class="order-card-robux">${Number(order.robux).toLocaleString()} R$</span>
+    <div class="ocard" id="oc-${o.id}">
+      <button class="odel" onclick="del(${o.id})">✕</button>
+      <div class="ocard-top">
+        <span class="ocard-user">@${esc(o.username)}</span>
+        <span class="ocard-robux">${Number(o.robux).toLocaleString()} R$</span>
       </div>
-      <div class="order-card-meta">
-        💰 $${order.ttd} TTD &nbsp;·&nbsp;
-        💳 ${paymentLabel} &nbsp;·&nbsp;
-        📋 ${order.status}<br>
-        📧 ${escapeHtml(order.email)}<br>
-        🕐 ${order.createdAt}
-        ${order.notes ? `<br>📝 ${escapeHtml(order.notes)}` : ''}
+      <div class="ocard-meta">
+        💰 $${o.ttd} TTD &nbsp;·&nbsp; 💳 ${labels[o.payment]||o.payment} &nbsp;·&nbsp; 📋 ${o.status}<br>
+        📧 ${esc(o.email)}<br>🕐 ${o.date}
       </div>
     </div>`;
 }
 
-/**
- * Delete an order and refresh both modals.
- * @param {number} id
- */
-function removeOrder(id) {
-  deleteOrder(id);
-  renderOrders();    // refresh Orders modal
-  // Also refresh admin if it's open
-  if (document.getElementById('adminModal').classList.contains('open')) {
-    renderAdminOrders();
-    updateAdminStats();
-  }
-  showToast('🗑️ Order deleted.');
+function emptyState(ico, msg) {
+  return `<div class="empty"><div class="empty-ico">${ico}</div><p>${msg}</p></div>`;
 }
 
-/* ──────────────────────────────────────────
-   ADMIN PANEL
-────────────────────────────────────────── */
-let adminUnlocked = false;  // track whether the password has been accepted
-
-/**
- * Open the Admin modal (always shows gate first unless already unlocked).
- */
-function openAdmin() {
-  if (!adminUnlocked) {
-    // Reset gate visibility
-    document.getElementById('adminGate').classList.remove('hidden');
-    document.getElementById('adminDashboard').classList.add('hidden');
-    document.getElementById('adminPassword').value = '';
-  }
-  openModal('adminModal');
-}
-
-/**
- * Check the admin password.
- */
-function checkAdminPassword() {
-  const input = document.getElementById('adminPassword').value;
-
-  if (input === ADMIN_PASS) {
-    adminUnlocked = true;
-    document.getElementById('adminGate').classList.add('hidden');
-    document.getElementById('adminDashboard').classList.remove('hidden');
-    updateAdminStats();
-    renderAdminOrders();
-  } else {
-    showToast('❌ Incorrect password. Try: admin123');
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('adminPassword').focus();
-  }
-}
-
-/**
- * Update the admin stats cards with live order data.
- */
-function updateAdminStats() {
-  const orders    = loadOrders();
-  const totalRobux = orders.reduce((sum, o) => sum + Number(o.robux), 0);
-  const totalTTD   = orders.reduce((sum, o) => sum + Number(o.ttd), 0);
-
-  document.getElementById('statOrders').textContent = orders.length;
-  document.getElementById('statRobux').textContent  = totalRobux.toLocaleString();
-  document.getElementById('statTTD').textContent    = '$' + totalTTD;
-}
-
-/**
- * Render orders in the admin modal (with delete buttons, same as user view).
- */
-function renderAdminOrders() {
-  const body   = document.getElementById('adminOrdersBody');
-  const orders = loadOrders();
-
-  if (orders.length === 0) {
-    body.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📊</div>
-        <p>No orders in the system yet.</p>
-      </div>`;
-    return;
-  }
-
-  body.innerHTML = orders.map(order => buildOrderCard(order, true)).join('');
-}
-
-/**
- * Clear ALL orders from localStorage (admin action).
- */
-function clearAllOrders() {
-  if (!confirm('Are you sure you want to delete ALL orders? This cannot be undone.')) return;
-  persistOrders([]);
-  renderAdminOrders();
-  updateAdminStats();
-  showToast('🗑️ All orders cleared.');
-}
-
-/* ──────────────────────────────────────────
-   MODAL HELPERS
-────────────────────────────────────────── */
-
-/**
- * Open a modal by its element ID.
- * @param {string} id
- */
-function openModal(id) {
+/* ── Modal helpers ── */
+function open(id) {
   document.getElementById(id).classList.add('open');
-  document.body.style.overflow = 'hidden';  // prevent background scroll
+  document.body.style.overflow = 'hidden';
 }
-
-/**
- * Close a modal by its element ID.
- * @param {string} id
- */
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
   document.body.style.overflow = '';
 }
 
-/* ──────────────────────────────────────────
-   TOAST NOTIFICATION
-────────────────────────────────────────── */
-let toastTimer = null;
-
-/**
- * Show a brief toast notification at the bottom of the screen.
- * @param {string} message
- */
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-
-  // Clear any existing timer
-  if (toastTimer) clearTimeout(toastTimer);
-
-  // Auto-hide after 3 seconds
-  toastTimer = setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
+/* ── Toast ── */
+let tt;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(tt);
+  tt = setTimeout(() => el.classList.remove('show'), 3200);
 }
 
-/* ──────────────────────────────────────────
-   UTILITY
-────────────────────────────────────────── */
-
-/**
- * Escape HTML special characters to prevent XSS from user-entered data.
- * @param {string} str
- * @returns {string}
- */
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g,  '&amp;')
-    .replace(/</g,  '&lt;')
-    .replace(/>/g,  '&gt;')
-    .replace(/"/g,  '&quot;')
-    .replace(/'/g,  '&#39;');
+/* ── Util ── */
+function esc(s) {
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ──────────────────────────────────────────
-   KEYBOARD SHORTCUTS
-────────────────────────────────────────── */
-document.addEventListener('keydown', function (e) {
-  // Escape closes any open modal
-  if (e.key === 'Escape') {
-    closeModal('ordersModal');
-    closeModal('adminModal');
-  }
-
-  // Enter in admin password field → check password
-  if (e.key === 'Enter' && document.activeElement.id === 'adminPassword') {
-    checkAdminPassword();
-  }
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal('ordersModal'); closeModal('adminModal'); }
+  if (e.key === 'Enter' && document.activeElement.id === 'adminPass') checkPass();
 });
 
-/* ──────────────────────────────────────────
-   INIT – runs when the page loads
-────────────────────────────────────────── */
-(function init() {
-  // Ensure slider starts at 0 with correct fill
-  updateCalculator(0);
-})();
+/* ── Init ── */
+onSlide(0);
+
+/* ── Utility class ── */
+document.head.insertAdjacentHTML('beforeend',`<style>.hidden{display:none!important}</style>`);
