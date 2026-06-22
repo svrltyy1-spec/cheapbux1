@@ -417,73 +417,130 @@ input[type="range"]:disabled::-webkit-slider-thumb { cursor:not-allowed; }
 }
 
 /* ── Result panel ── */
-.result-panel {
+/* ══════════════════════════════
+   YOU RECEIVE — redesigned card
+══════════════════════════════ */
+.receive-card {
   margin:28px 28px 0;
-  background:linear-gradient(135deg,rgba(0,212,255,.08) 0%,rgba(124,58,237,.06) 100%);
-  border:1px solid rgba(0,212,255,.18);
-  border-radius:20px; padding:22px;
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
-  box-shadow:0 0 40px rgba(0,212,255,.07) inset;
+  position:relative;
+  border-radius:22px;
+  padding:2px;                     /* border-gradient trick */
+  background:linear-gradient(135deg,rgba(0,212,255,.45),rgba(124,58,237,.3),rgba(255,215,0,.25));
+  box-shadow:0 0 40px rgba(0,212,255,.08), 0 8px 32px rgba(0,0,0,.3);
 }
-.result-tag {
-  font-size:9px; font-weight:800; letter-spacing:3px;
-  color:var(--cyan); margin-bottom:12px;
+.receive-card::before {
+  content:''; position:absolute; inset:2px; border-radius:20px; z-index:0;
+  background:linear-gradient(135deg,rgba(0,212,255,.07) 0%,rgba(10,8,30,.95) 60%,rgba(124,58,237,.06) 100%);
 }
-.result-num-row {
-  display:flex; align-items:baseline; gap:10px; margin-bottom:6px;
+.receive-card > * { position:relative; z-index:1; }
+
+/* Header */
+.receive-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px 0;
+}
+.receive-label {
+  display:flex; align-items:center; gap:6px;
+  font-size:9px; font-weight:800; letter-spacing:3px; color:var(--cyan);
+}
+.receive-label-arrow {
+  width:14px; height:14px; stroke:var(--cyan); flex-shrink:0;
+}
+.receive-rate-badge {
+  font-size:11px; font-weight:700; color:var(--gold);
+  background:rgba(255,215,0,.1); border:1px solid rgba(255,215,0,.25);
+  border-radius:50px; padding:3px 12px; letter-spacing:.5px;
 }
 
-.rcoin {
-  width:44px; height:44px; border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+/* Main body */
+.receive-body {
+  display:flex; align-items:center; gap:20px;
+  padding:16px 20px 14px;
+}
+
+/* Animated coin */
+.receive-coin {
+  position:relative; flex-shrink:0;
+  width:72px; height:72px;
+}
+.receive-coin-face {
+  width:72px; height:72px; border-radius:50%;
+  background:linear-gradient(135deg,#ffd700,#ffb300,#ffe066);
   display:flex; align-items:center; justify-content:center;
-  font-weight:900; font-size:12px; color:#000;
-  box-shadow:0 0 20px rgba(255,215,0,.5),0 4px 10px rgba(0,0,0,.4);
-  transform:perspective(180px) rotateY(-10deg);
-  position:relative; overflow:hidden; flex-shrink:0;
+  font-family:var(--font); font-weight:900; font-size:18px; color:#3a1800;
+  position:relative; overflow:hidden;
+  box-shadow:0 0 28px rgba(255,215,0,.55), 0 4px 16px rgba(0,0,0,.45);
+  animation:coinPulse 3s ease-in-out infinite;
+  border:2px solid rgba(255,255,255,.25);
 }
-.rcoin-shine {
-  position:absolute; top:0; left:-50%; width:40%; height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
-  animation:coinShine 2.5s infinite;
+.receive-coin-txt { position:relative; z-index:1; letter-spacing:-1px; }
+.receive-coin-shine {
+  position:absolute; inset:0; border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.45) 0%,transparent 55%);
+  pointer-events:none;
 }
-@keyframes coinShine { 0%{left:-50%} 60%{left:120%} 100%{left:120%} }
+.receive-coin-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(255,215,0,.25);
+  animation:ringExpand 3s ease-out infinite;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.rc-r1 { width:90px;  height:90px; animation-delay:0s; }
+.rc-r2 { width:110px; height:110px; animation-delay:.8s; }
+.receive-coin-glow {
+  position:absolute; inset:-10px; border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,215,0,.18),transparent 70%);
+  filter:blur(12px); pointer-events:none;
+}
+@keyframes coinPulse {
+  0%,100% { box-shadow:0 0 28px rgba(255,215,0,.55), 0 4px 16px rgba(0,0,0,.45); }
+  50%      { box-shadow:0 0 44px rgba(255,215,0,.8),  0 6px 20px rgba(0,0,0,.5); }
+}
+@keyframes ringExpand {
+  0%   { opacity:.6; transform:translate(-50%,-50%) scale(1); }
+  100% { opacity:0;  transform:translate(-50%,-50%) scale(1.8); }
+}
 
+/* Amount text */
+.receive-amount { flex:1; min-width:0; }
+.receive-num-row {
+  display:flex; align-items:baseline; gap:10px; margin-bottom:4px;
+}
 .rnum {
   font-size:clamp(38px,7vw,56px); font-weight:900; line-height:1;
-  background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));
+  background:linear-gradient(135deg,#fff 30%,rgba(255,255,255,.65));
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   transition:all .25s;
 }
-.runit { font-size:18px; font-weight:700; color:var(--sub); }
-.rhint { font-size:12px; color:var(--sub); }
+.runit {
+  font-size:18px; font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),rgba(0,212,255,.6));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.rhint { font-size:12px; color:var(--sub); line-height:1.4; }
 
-/* 3D R$ badge */
-.result-badge { position:relative; flex-shrink:0; }
-.rbadge-top { position:relative; }
-.rbadge-face {
-  width:62px; height:62px; border-radius:14px;
-  background:linear-gradient(135deg,var(--purple),var(--purple2));
-  display:flex; align-items:center; justify-content:center;
-  font-weight:900; font-size:16px; color:#fff;
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 6px 0 rgba(60,15,180,.8), inset 0 1px 0 rgba(255,255,255,.2);
-  transform:perspective(180px) rotateX(6deg) rotateY(-6deg);
+/* Footer strip */
+.receive-strip {
+  display:flex; align-items:center;
+  margin:0 20px 16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;
+  padding:10px 14px;
+  gap:0;
 }
-.rbadge-side {
-  position:absolute; right:-6px; top:6px; bottom:-6px; width:6px;
-  background:rgba(60,15,180,.7); border-radius:0 4px 4px 0;
+.rstrip-item {
+  display:flex; align-items:center; gap:8px; flex:1;
 }
-.rbadge-bottom {
-  position:absolute; bottom:-6px; left:6px; right:-6px; height:6px;
-  background:rgba(60,15,180,.6); border-radius:0 0 4px 4px;
-}
-.rbadge-glow {
-  position:absolute; bottom:-18px; left:50%;
-  transform:translateX(-50%);
-  width:50px; height:14px;
-  background:radial-gradient(ellipse,rgba(124,58,237,.55),transparent 70%);
-  filter:blur(8px);
+.rstrip-ico { font-size:16px; line-height:1; }
+.rstrip-text { display:flex; flex-direction:column; gap:1px; }
+.rstrip-lbl  { font-size:9px; font-weight:700; letter-spacing:1px; color:rgba(255,255,255,.35); text-transform:uppercase; }
+.rstrip-val  { font-size:12px; font-weight:800; color:var(--text); }
+.rstrip-val--cyan  { color:var(--cyan); }
+.rstrip-val--green { color:var(--green); }
+.rstrip-sep {
+  width:1px; height:28px; background:rgba(255,255,255,.1); margin:0 12px; flex-shrink:0;
 }
 
 /* ── Form ── */
@@ -815,12 +872,22 @@ select.inp option { background:#10102a; color:#fff; }
   .pay-sub     { font-size:9px; }
 
   /* Result panel */
-  .result-panel  { margin:18px 14px 0; padding:16px 14px; flex-wrap:wrap; gap:10px; }
-  .result-badge  { display:none; }
-  .rnum          { font-size:42px; }
-  .runit         { font-size:15px; }
-  .rhint         { font-size:11px; }
-  .result-tag    { font-size:8px; letter-spacing:2px; margin-bottom:8px; }
+  /* receive card mobile */
+  .receive-card    { margin:18px 14px 0; }
+  .receive-hd      { padding:14px 14px 0; }
+  .receive-body    { padding:12px 14px 10px; gap:14px; }
+  .receive-coin    { width:58px; height:58px; }
+  .receive-coin-face { width:58px; height:58px; font-size:15px; }
+  .rc-r1           { width:74px; height:74px; }
+  .rc-r2           { width:90px; height:90px; }
+  .rnum            { font-size:42px; }
+  .runit           { font-size:15px; }
+  .rhint           { font-size:11px; }
+  .receive-strip   { margin:0 14px 14px; padding:8px 10px; gap:0; }
+  .rstrip-ico      { font-size:14px; }
+  .rstrip-lbl      { font-size:8px; }
+  .rstrip-val      { font-size:11px; }
+  .rstrip-sep      { margin:0 8px; }
 
   /* Form */
   .inp       { padding:11px 13px; font-size:14px; }

@@ -174,23 +174,69 @@
     <div class="card-div"></div>
 
     <!-- You Receive -->
-    <div class="result-panel">
-      <div class="result-left">
-        <p class="result-tag">YOU RECEIVE</p>
-        <div class="result-num-row">
-          <span class="rnum" id="rnum">0</span>
-          <span class="runit">Robux</span>
+    <div class="receive-card">
+
+      <!-- Header row -->
+      <div class="receive-hd">
+        <div class="receive-label">
+          <svg class="receive-label-arrow" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 2v9M7 11L3 7M7 11l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          YOU RECEIVE
         </div>
-        <p class="rhint" id="rhint">Select an amount above</p>
+        <div class="receive-rate-badge">⚡ 1 TTD = 10 R$</div>
       </div>
-      <div class="result-badge" aria-hidden="true">
-        <div class="rbadge-top">
-          <div class="rbadge-face">R$</div>
-          <div class="rbadge-side"></div>
-          <div class="rbadge-bottom"></div>
+
+      <!-- Main display -->
+      <div class="receive-body">
+        <!-- Animated coin -->
+        <div class="receive-coin" aria-hidden="true">
+          <div class="receive-coin-face">
+            <span class="receive-coin-txt">R$</span>
+            <div class="receive-coin-shine"></div>
+          </div>
+          <div class="receive-coin-ring rc-r1"></div>
+          <div class="receive-coin-ring rc-r2"></div>
+          <div class="receive-coin-glow"></div>
         </div>
-        <div class="rbadge-glow"></div>
+
+        <!-- Amount -->
+        <div class="receive-amount">
+          <div class="receive-num-row">
+            <span class="rnum" id="rnum">0</span>
+            <span class="runit">Robux</span>
+          </div>
+          <p class="rhint" id="rhint">Select an amount above</p>
+        </div>
       </div>
+
+      <!-- Footer strip -->
+      <div class="receive-strip">
+        <div class="rstrip-item">
+          <span class="rstrip-ico">💵</span>
+          <div class="rstrip-text">
+            <span class="rstrip-lbl">You Pay</span>
+            <span class="rstrip-val" id="stripTTD">—</span>
+          </div>
+        </div>
+        <div class="rstrip-sep"></div>
+        <div class="rstrip-item">
+          <span class="rstrip-ico">🎮</span>
+          <div class="rstrip-text">
+            <span class="rstrip-lbl">Delivery</span>
+            <span class="rstrip-val rstrip-val--cyan">Instant</span>
+          </div>
+        </div>
+        <div class="rstrip-sep"></div>
+        <div class="rstrip-item">
+          <span class="rstrip-ico">🔒</span>
+          <div class="rstrip-text">
+            <span class="rstrip-lbl">Status</span>
+            <span class="rstrip-val rstrip-val--green">Secure</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Divider -->

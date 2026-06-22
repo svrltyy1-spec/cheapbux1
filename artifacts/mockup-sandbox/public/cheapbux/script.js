@@ -94,8 +94,10 @@ function onSlide(v) {
   const robux = ttd * RATE;
   document.getElementById('rnum').textContent  = robux.toLocaleString();
   document.getElementById('rhint').textContent = ttd
-    ? `${robux.toLocaleString()} Robux → @${getSession()} for $${ttd} TTD`
+    ? `${robux.toLocaleString()} R$ → @${getSession()||'you'} · $${ttd} TTD`
     : 'Select an amount above';
+  const stripTTD = document.getElementById('stripTTD');
+  if (stripTTD) stripTTD.textContent = ttd ? `$${ttd} TTD` : '—';
 
   markPick(ttd);
 }
