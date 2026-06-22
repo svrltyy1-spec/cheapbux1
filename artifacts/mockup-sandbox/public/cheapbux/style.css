@@ -451,11 +451,12 @@ input[type="range"]:disabled::-webkit-slider-thumb { cursor:not-allowed; }
 .inp {
   width:100%;
   padding:13px 16px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--border);
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
   border-radius:12px;
-  color:var(--text); font-size:14px; font-family:var(--font);
+  color:#ffffff; font-size:14px; font-family:var(--font);
   outline:none; transition:border-color .2s, box-shadow .2s;
+  -webkit-text-fill-color:#ffffff;
 }
 .inp::placeholder { color:rgba(255,255,255,.25); }
 .inp:focus {
@@ -679,20 +680,118 @@ select.inp option { background:#10102a; color:#fff; }
 .btn-danger:hover { background:rgba(239,68,68,.2); }
 
 /* ══════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET
+══════════════════════════════════════ */
+@media(max-width:768px) {
+  .hero-inner { flex-direction:column; text-align:center; gap:24px; }
+  .hero-right  { display:none; }
+  .hero-stats  { justify-content:center; }
+  .hero-h1     { font-size:clamp(26px,6vw,38px); }
+  .hero        { padding:40px 20px 28px; }
+  .admin-stats { grid-template-columns:repeat(2,1fr); }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MOBILE
 ══════════════════════════════════════ */
 @media(max-width:600px) {
-  .hdr { padding:10px 14px; }
-  .brand-name { font-size:15px; }
-  .hero { padding:36px 16px 28px; }
-  .hero-h1 { font-size:30px; }
-  .hero-right { display:none; }
-  .admin-stats { grid-template-columns:repeat(2,1fr); }
-  .pay-options { grid-template-columns:repeat(3,1fr); }
-  .btn-order { width:calc(100% - 32px); margin:20px 16px; }
-  .step { padding:20px 16px 0; }
-  .card-div { margin:20px 16px 0; }
-  .result-panel { margin:20px 16px 0; }
+  /* Header */
+  .hdr        { padding:10px 12px; flex-wrap:nowrap; gap:8px; }
+  .brand-name { font-size:14px; letter-spacing:2px; }
+  .brand-icon { width:30px; height:30px; }
+  .hdr-nav    { gap:5px; }
+  .hbtn       { padding:6px 10px; font-size:11px; }
+  .hbtn--admin { width:30px; height:30px; font-size:13px; }
+  .hdr-user   { font-size:11px; padding:4px 10px; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* Hero */
+  .hero        { padding:28px 14px 18px; }
+  .hero-right  { display:none; }
+  .hero-inner  { flex-direction:column; text-align:center; gap:16px; }
+  .hero-h1     { font-size:26px; }
+  .hero-p      { font-size:13px; }
+  .hero-pill   { font-size:10px; }
+  .hero-stats  { justify-content:center; gap:14px; }
+  .hstat-num   { font-size:22px; }
+
+  /* Main card */
+  .main        { padding:0 10px; }
+  .calc-card   { border-radius:20px; }
+  .step        { padding:18px 14px 0; }
+  .card-div    { margin:18px 14px 0; }
+
+  /* Slider + picks */
+  .slider-wrap   { margin-bottom:14px; }
+  .picks         { gap:6px; margin-bottom:18px; }
+  .pick          { padding:6px 11px; font-size:12px; }
+  input[type="range"]::-webkit-slider-thumb { width:22px; height:22px; }
+  input[type="range"]::-moz-range-thumb     { width:22px; height:22px; }
+
+  /* Amount pill */
+  .step-hd       { gap:8px; margin-bottom:14px; }
+  .amount-pill   { font-size:16px; padding:5px 14px; min-width:60px; }
+
+  /* Payment options */
+  .pay-options { grid-template-columns:repeat(3,1fr); gap:6px; }
+  .pay-card    { padding:10px 6px; }
+  .pay-icon    { font-size:18px; }
+  .pay-name    { font-size:11px; }
+  .pay-sub     { font-size:9px; }
+
+  /* Result panel */
+  .result-panel  { margin:18px 14px 0; padding:16px 14px; flex-wrap:wrap; gap:10px; }
+  .result-badge  { display:none; }
+  .rnum          { font-size:42px; }
+  .runit         { font-size:15px; }
+  .rhint         { font-size:11px; }
+  .result-tag    { font-size:8px; letter-spacing:2px; margin-bottom:8px; }
+
+  /* Form */
+  .inp       { padding:11px 13px; font-size:14px; }
+
+  /* Order button */
+  .btn-order { width:calc(100% - 28px); margin:18px 14px; padding:14px; font-size:15px; }
+
+  /* Modals */
+  .overlay   { padding:10px; align-items:flex-end; }
+  .modal     { border-radius:20px 20px 0 0; max-height:92vh; max-width:100%; }
+  .modal--wide { max-width:100%; }
+  .modal-hd  { padding:14px 16px; }
+  .modal-title { font-size:15px; }
+  .modal-bd  { padding:12px 14px; }
+  .modal-bd input.inp { font-size:16px; } /* prevents iOS zoom */
+
+  /* Admin */
+  .admin-stats  { grid-template-columns:repeat(2,1fr); padding:14px 14px 0; gap:8px; }
+  .astat-v      { font-size:20px; }
+  .astat-k      { font-size:9px; }
+  .admin-filters { padding:12px 14px 0; gap:5px; }
+  .afbtn         { padding:5px 10px; font-size:11px; }
+  .admin-foot    { padding:10px 14px 14px; }
+
+  /* Gate / auth form */
+  .gate-row          { flex-direction:column; }
+  .gate-row .btn-order { width:100%; margin:8px 0 0; }
+
+  /* Order cards */
+  .ocard         { padding:12px 12px; }
+  .ocard-actions { flex-wrap:wrap; gap:5px; }
+  .aact-btn      { padding:5px 10px; font-size:11px; }
+
+  /* Auth modal */
+  #formLogin .btn-order,
+  #formSignup .btn-order { width:100%; margin:16px 0 0; }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE
+══════════════════════════════════════ */
+@media(max-width:380px) {
+  .pay-options { grid-template-columns:1fr 1fr 1fr; }
+  .picks       { gap:4px; }
+  .pick        { padding:5px 9px; font-size:11px; }
+  .hdr-user    { display:none; }
+  .hero-h1     { font-size:22px; }
 }
 
 /* utility */
